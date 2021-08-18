@@ -16,8 +16,25 @@ function init() {
 function translate() {
     textInput = textareaInput.value;
     // textInput = dbc2sbc(textInput);
-    textInput = textInput.replace(/\s+/g, ' ');
-    textareaOutput.value = textInput
+    textInput = textInput.replace(/\s+/g, ' ');  // remove Metacharacter (所有空字符，如空格。回车，换行。。。)
+
+    const xhr = new XMLHttpRequest();
+    xhr.responseType = "json";
+    xhr.open('POST', "https://api-free.deepl.com/v2/translate?auth_key=213b57df-6b40-cee2-2f9c-2c8dbaa2c34a:fx");
+    xhr.setRequestHeader("Content-Type","application/x-www-form-urlencoded");
+    xhr.send(`auth_key=213b57df-6b40-cee2-2f9c-2c8dbaa2c34a:fx&text=${textInput}&target_lang=DE`);
+    
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if (xhr.status >= 200 && xhr.status <= 300) {
+                text = xhr.response.translations[0].text;
+                sourceLanguage = xhr.response.translations[0].detected_source_language;
+                textareaOutput.value = text
+            }
+        }
+    }
+
+    
 }
 
 
