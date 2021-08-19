@@ -6,6 +6,33 @@ let mainWindow = null;
 let tray = null;
 
 app.on('ready', () => {
+
+    createMainWindow()
+    createTray()
+    createClipboard()
+
+})
+
+
+// Quit when all windows are closed.
+app.on("window-all-closed", function() {
+    // On macOS it is common for applications and their menu bar
+    // to stay active until the user quits explicitly with Cmd + Q
+    if (process.platform !== "darwin") {
+      app.isQuiting = true;
+      app.quit();
+    }
+  });
+  
+app.on("activate", function() {
+    // On macOS it's common to re-create a window in the app when the
+    // dock icon is clicked and there are no other windows open.
+    if (mainWindow === null) {
+      createWindow();
+    }
+  });
+
+function createMainWindow() {
     // ***************************************************
     // *                mainWindow                       
     // ***************************************************                                                           
@@ -37,11 +64,12 @@ app.on('ready', () => {
         mainWindow.hide();
     });
     mainWindow.loadURL("https://www.deepl.com/translator");
+  }
+
+  
 
 
-    // ***************************************************
-    // *                    tray                       
-    // ***************************************************  
+function createTray() {
     tray = new Tray(path.join(__dirname, '..', 'icon.ico'))
     const template = [
         { label: 'Show', type: 'normal', click() {mainWindow.show();} },
@@ -53,9 +81,10 @@ app.on('ready', () => {
     tray.on('click',()=>{
         mainWindow.show();
     })
+}
 
 
-
+function createClipboard() {
     // ***************************************************
     // *                clipboard                       
     // ***************************************************
@@ -73,27 +102,10 @@ app.on('ready', () => {
             clipboard.once('text-changed', checkDoublePressCtrlC)
             clipboard.startWatching();
         },200)
-    
+
     })
     clipboard.startWatching();
-})
+}
 
 
 
-// Quit when all windows are closed.
-app.on("window-all-closed", function() {
-    // On macOS it is common for applications and their menu bar
-    // to stay active until the user quits explicitly with Cmd + Q
-    if (process.platform !== "darwin") {
-      app.isQuiting = true;
-      app.quit();
-    }
-  });
-  
-  app.on("activate", function() {
-    // On macOS it's common to re-create a window in the app when the
-    // dock icon is clicked and there are no other windows open.
-    if (mainWindow === null) {
-      createWindow();
-    }
-  });
