@@ -2,9 +2,9 @@
   "name": "mydeepl",
   "version": "1.0.0",
   "description": "",
-  "main": "main.js",
+  "main": "main2.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "electron ."
   },
   "repository": {
     "type": "git",
@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/wangyang3c/MyDeepL/issues"
   },
-  "homepage": "https://github.com/wangyang3c/MyDeepL#readme"
+  "homepage": "https://github.com/wangyang3c/MyDeepL#readme",
+  "dependencies": {
+    "electron-clipboard-extended": "^1.1.1"
+  }
 }
