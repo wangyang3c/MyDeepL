@@ -8,6 +8,7 @@ let tray = null;
 app.on('ready', () => {
 
     createMainWindow()
+    createMainMenu()
     createTray()
     createClipboard()
 
@@ -67,7 +68,25 @@ function createMainWindow() {
   }
 
   
-
+function createMainMenu() {
+    const template = [
+      {
+        label: "Options",
+        submenu: [
+          {
+            label: "Delete newlines",
+            // accelerator: "CommandOrControl+N",
+            click() {
+                console.log("666")
+                // mainWindow.webContents.send("translateClipboard");
+            }
+          }
+        ]
+      }
+    ];
+    const menu = Menu.buildFromTemplate(template);
+    Menu.setApplicationMenu(menu);
+}
 
 function createTray() {
     tray = new Tray(path.join(__dirname, '..', 'icon.ico'))
