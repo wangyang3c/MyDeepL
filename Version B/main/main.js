@@ -7,10 +7,10 @@ let tray = null;
 
 app.on('ready', () => {
 
-    createMainWindow()
-    createMainMenu()
-    createTray()
-    createClipboard()
+    createMainWindow();
+    createMainMenu();
+    createTray();
+    createClipboard();
 
 })
 
@@ -36,8 +36,7 @@ app.on("activate", function() {
 // ***************************************************
 // *                mainWindow                       
 // ***************************************************   
-function createMainWindow() {
-                                                        
+function createMainWindow() {                                       
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 600,
@@ -66,6 +65,8 @@ function createMainWindow() {
         mainWindow.hide();
     });
     mainWindow.loadURL("https://www.deepl.com/translator");
+    // mainWindow.webContents.openDevTools()
+
   }
 
 
@@ -84,6 +85,14 @@ function createMainMenu() {
             click(menuItem, browserWindow, event) {
                 mainWindow.webContents.send("setAutoDeleteNewlines", menuItem.checked);
             }
+          }, 
+          { 
+            label: "Auto-copy translation",
+            type: "checkbox",
+            checked: false,
+            click(menuItem, browserWindow, event) {
+                mainWindow.webContents.send("setAutoCopy", menuItem.checked);
+            }
           }
         ]
       }
@@ -97,10 +106,10 @@ function createMainMenu() {
 // *                tray                    
 // ***************************************************
 function createTray() {
-    tray = new Tray(path.join(__dirname, '..', 'icon.ico'))
+    tray = new Tray(path.join(__dirname, '..', 'icon.ico'));
     const template = [
-        { label: 'Show', type: 'normal', click() {mainWindow.show();} },
-        { label: 'Exit', type: 'normal', click() {app.isQuiting = true; app.quit();} },
+        { label: 'Show', type: 'normal', click() {mainWindow.show();}},
+        { label: 'Exit', type: 'normal', click() {app.isQuiting = true; app.quit();}},
         ];
     const contextMenu = Menu.buildFromTemplate(template);
     tray.setToolTip('MyDeepL');
@@ -122,14 +131,15 @@ function createClipboard() {
             if(currentText == clipboard.readText()) {
                 mainWindow.show();
                 mainWindow.webContents.send('translateClipboard');
+
             } else {
                 clipboard.writeText(currentText);
             }
             clipboard.once('text-changed', checkDoublePressCtrlC);
             clipboard.startWatching();
-        },200)
+        },200);
 
-    })
+    });
     clipboard.startWatching();
 }
 
