@@ -1,4 +1,4 @@
-const {app, BrowserWindow, Menu, Tray} = require('electron');
+const {app, BrowserWindow, Menu, Tray, shell} = require('electron');
 const clipboard = require('electron-clipboard-extended');
 const path = require('path');
 
@@ -65,6 +65,22 @@ function createMainWindow() {
         mainWindow.hide();
     });
     mainWindow.loadURL("https://www.deepl.com/translator");
+
+    // opening link in new browser instead of in the app
+    mainWindow.webContents.on('will-navigate', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    })
+    mainWindow.webContents.on('will-navigate', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    })
+    mainWindow.webContents.on('new-window', (event, url) => {
+        event.preventDefault();
+        shell.openExternal(url);
+    })
+
+
     // mainWindow.webContents.openDevTools()
 
   }

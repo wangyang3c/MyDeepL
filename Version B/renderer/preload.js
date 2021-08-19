@@ -1,6 +1,5 @@
 const {clipboard,ipcRenderer} = require("electron");
 
-
 var autoDeleteNewlines = true;
 var autoCopy = false;
 var outputObserver = null;
