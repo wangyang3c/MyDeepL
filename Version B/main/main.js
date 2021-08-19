@@ -12,7 +12,7 @@ app.on('ready', () => {
         webPreferences: {
             nodeIntegration: true, 
             enableRemoteModule: true, 
-            preload: path.join(__dirname, 'js', 'preload.js')
+            preload: path.join(__dirname, '..', 'renderer', 'preload.js')
         }      //要在electron里正常显示deepl网页版contextIsolation必须要是true
     })
     mainWindow.on('closed', () => {
