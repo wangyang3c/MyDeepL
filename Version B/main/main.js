@@ -33,10 +33,11 @@ app.on("activate", function() {
     }
   });
 
+// ***************************************************
+// *                mainWindow                       
+// ***************************************************   
 function createMainWindow() {
-    // ***************************************************
-    // *                mainWindow                       
-    // ***************************************************                                                           
+                                                        
     mainWindow = new BrowserWindow({
         width: 1000,
         height: 600,
@@ -67,18 +68,21 @@ function createMainWindow() {
     mainWindow.loadURL("https://www.deepl.com/translator");
   }
 
-  
+
+// ***************************************************
+// *                mainMenu                    
+// *************************************************** 
 function createMainMenu() {
     const template = [
       {
         label: "Options",
         submenu: [
-          {
-            label: "Delete newlines",
-            // accelerator: "CommandOrControl+N",
-            click() {
-                console.log("666")
-                // mainWindow.webContents.send("translateClipboard");
+          { 
+            label: "Auto-delete newlines",
+            type: "checkbox",
+            checked: true,
+            click(menuItem, browserWindow, event) {
+                mainWindow.webContents.send("setAutoDeleteNewlines", menuItem.checked);
             }
           }
         ]
@@ -88,37 +92,40 @@ function createMainMenu() {
     Menu.setApplicationMenu(menu);
 }
 
+
+// ***************************************************
+// *                tray                    
+// ***************************************************
 function createTray() {
     tray = new Tray(path.join(__dirname, '..', 'icon.ico'))
     const template = [
         { label: 'Show', type: 'normal', click() {mainWindow.show();} },
         { label: 'Exit', type: 'normal', click() {app.isQuiting = true; app.quit();} },
         ];
-    const contextMenu = Menu.buildFromTemplate(template)
-    tray.setToolTip('MyDeepL')
-    tray.setContextMenu(contextMenu)
+    const contextMenu = Menu.buildFromTemplate(template);
+    tray.setToolTip('MyDeepL');
+    tray.setContextMenu(contextMenu);
     tray.on('click',()=>{
         mainWindow.show();
     })
 }
 
-
+// ***************************************************
+// *                clipboard                    
+// ***************************************************
 function createClipboard() {
-    // ***************************************************
-    // *                clipboard                       
-    // ***************************************************
     clipboard.once('text-changed', function checkDoublePressCtrlC() {
         clipboard.stopWatching();
-        let currentText = clipboard.readText()
-        clipboard.clear()
+        let currentText = clipboard.readText();
+        clipboard.clear();
         setTimeout(() => {
             if(currentText == clipboard.readText()) {
                 mainWindow.show();
                 mainWindow.webContents.send('translateClipboard');
             } else {
-                clipboard.writeText(currentText)
+                clipboard.writeText(currentText);
             }
-            clipboard.once('text-changed', checkDoublePressCtrlC)
+            clipboard.once('text-changed', checkDoublePressCtrlC);
             clipboard.startWatching();
         },200)
 
