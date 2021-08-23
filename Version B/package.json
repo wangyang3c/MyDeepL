@@ -1,10 +1,20 @@
 {
   "name": "mydeepl",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is my DeepL.",
   "main": "./main/main.js",
+  "build": {
+    "appId": "myDeepL",
+    "mac": {
+      "target": ["dmg","zip"]
+    },
+    "win": {
+      "target": ["nsis","portable","zip"]
+    }
+  },
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
   },
   "repository": {
     "type": "git",
@@ -19,5 +29,9 @@
   "homepage": "https://github.com/wangyang3c/MyDeepL#readme",
   "dependencies": {
     "electron-clipboard-extended": "^1.1.1"
+  },
+  "devDependencies": {
+    "electron": "^13.2.1",
+    "electron-builder": "^22.11.7"
   }
 }
