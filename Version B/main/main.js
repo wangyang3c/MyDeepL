@@ -1,19 +1,27 @@
 const {app, BrowserWindow, Menu, Tray, shell} = require('electron');
 const clipboard = require('electron-clipboard-extended');
 const path = require('path');
+const ioHook = require('iohook');
 
-let mainWindow = null;
-let tray = null;
 
+var mainWindow = null;
+var tray = null;
+
+// ***************************************************
+// *                app                       
+// *************************************************** 
 app.on('ready', () => {
 
     createMainWindow();
     createMainMenu();
     createTray();
-    createClipboard();
+    createDoublePressCtrlCListener();
 
 })
 
+app.on('before-quit', () => {
+  ioHook.stop();
+});
 
 // Quit when all windows are closed.
 app.on("window-all-closed", function() {
@@ -43,8 +51,8 @@ function createMainWindow() {
         icon: path.join(__dirname, '..', 'icon.ico'),
         // autoHideMenuBar: true,
         webPreferences: {
-            nodeIntegration: true, 
-            enableRemoteModule: true, 
+            // nodeIntegration: true, 
+            // enableRemoteModule: true, 
             preload: path.join(__dirname, '..', 'renderer', 'preload.js')
         }      //要在electron里正常显示deepl网页版contextIsolation必须要是true
     });
@@ -138,25 +146,48 @@ function createTray() {
 // ***************************************************
 // *                clipboard                    
 // ***************************************************
-function createClipboard() {
-    clipboard.once('text-changed', function checkDoublePressCtrlC() {
-        clipboard.stopWatching();
-        let currentText = clipboard.readText();
-        clipboard.clear();
-        setTimeout(() => {
-            if(currentText == clipboard.readText()) {
-                mainWindow.show();
-                mainWindow.webContents.send('translateClipboard');
+function createDoublePressCtrlCListener() {
+    // clipboard.on('text-changed', function checkDoublePressCtrlC() {
+    //     clipboard.stopWatching();
+    //     let currentText = clipboard.readText();
+    //     clipboard.clear();
+    //     setTimeout(() => {
+    //         if(currentText == clipboard.readText()) {
+    //             mainWindow.webContents.send('translateClipboard');
+    //             mainWindow.show();
+    //             mainWindow.moveTop();
 
-            } else {
-                clipboard.writeText(currentText);
-            }
-            clipboard.once('text-changed', checkDoublePressCtrlC);
-            clipboard.startWatching();
-        },200);
+    //         } else {
+    //             clipboard.writeText(currentText);
+    //         }
+    //         // clipboard.once('text-changed', checkDoublePressCtrlC);
+    //         clipboard.startWatching();
+    //     },300);
 
-    });
-    clipboard.startWatching();
+    // });
+    // clipboard.startWatching();
+
+    var PressCtrlC = false;
+    ioHook.on("keydown", event => {
+        if(event.ctrlKey && event.keycode === 46 && !PressCtrlC) {
+          PressCtrlC = true;
+          setTimeout(() => {
+            PressCtrlC = false;
+          },400)
+        } else if(event.ctrlKey && event.keycode === 46 && PressCtrlC) {
+          mainWindow.webContents.send('translateClipboard');
+          PressCtrlC = false;
+          // 这里必须加个延时，不然可能无法正常聚焦窗口
+          setTimeout(() => {
+            mainWindow.show(); 
+          },350)
+
+        } else {
+          PressCtrlC = false;
+        }
+        // console.log(event); // {keychar: 'f', keycode: 19, rawcode: 15, type: 'keup'}
+     });
+     ioHook.start();
 }
 
 

@@ -6,10 +6,17 @@
   "build": {
     "appId": "myDeepL",
     "mac": {
-      "target": ["dmg","zip"]
+      "target": [
+        "dmg",
+        "zip"
+      ]
     },
     "win": {
-      "target": ["nsis","portable","zip"]
+      "target": [
+        "nsis",
+        "portable",
+        "zip"
+      ]
     }
   },
   "scripts": {
@@ -28,10 +35,11 @@
   },
   "homepage": "https://github.com/wangyang3c/MyDeepL#readme",
   "dependencies": {
-    "electron-clipboard-extended": "^1.1.1"
+    "electron-clipboard-extended": "^1.1.1",
+    "iohook": "^0.9.3"
   },
   "devDependencies": {
-    "electron": "^13.2.1",
+    "electron": "^12.0.17",
     "electron-builder": "^22.11.7"
   }
 }
