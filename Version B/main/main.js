@@ -1,5 +1,4 @@
 const {app, BrowserWindow, Menu, Tray, shell} = require('electron');
-const clipboard = require('electron-clipboard-extended');
 const path = require('path');
 const ioHook = require('iohook');
 
@@ -144,29 +143,9 @@ function createTray() {
 }
 
 // ***************************************************
-// *                clipboard                    
+// *                DoublePressCtrlCListener                    
 // ***************************************************
 function createDoublePressCtrlCListener() {
-    // clipboard.on('text-changed', function checkDoublePressCtrlC() {
-    //     clipboard.stopWatching();
-    //     let currentText = clipboard.readText();
-    //     clipboard.clear();
-    //     setTimeout(() => {
-    //         if(currentText == clipboard.readText()) {
-    //             mainWindow.webContents.send('translateClipboard');
-    //             mainWindow.show();
-    //             mainWindow.moveTop();
-
-    //         } else {
-    //             clipboard.writeText(currentText);
-    //         }
-    //         // clipboard.once('text-changed', checkDoublePressCtrlC);
-    //         clipboard.startWatching();
-    //     },300);
-
-    // });
-    // clipboard.startWatching();
-
     var PressCtrlC = false;
     ioHook.on("keydown", event => {
         if(event.ctrlKey && event.keycode === 46 && !PressCtrlC) {
@@ -180,7 +159,7 @@ function createDoublePressCtrlCListener() {
           // 这里必须加个延时，不然可能无法正常聚焦窗口
           setTimeout(() => {
             mainWindow.show(); 
-          },350)
+          },400)
 
         } else {
           PressCtrlC = false;

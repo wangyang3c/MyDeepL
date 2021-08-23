@@ -35,7 +35,6 @@
   },
   "homepage": "https://github.com/wangyang3c/MyDeepL#readme",
   "dependencies": {
-    "electron-clipboard-extended": "^1.1.1",
     "iohook": "^0.9.3"
   },
   "devDependencies": {
