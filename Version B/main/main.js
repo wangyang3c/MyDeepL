@@ -11,17 +11,16 @@ let tray = null;
 // ***************************************************
 // *                create or load config                       
 // *************************************************** 
-const configFilePath = path.join(__dirname, '..', 'config.json');
-var config = null;
+const configFilePath = path.join(app.getAppPath(), '..','..', 'config.json');  // 打包完成后app.getAppPath()定位到resources/app.asar文件
 if (!fs.existsSync(configFilePath)){
-  config = { 
+  let deafultConfig = { 
     autoDeleteNewlines: true,
     autoCopy: false,  
   };
-  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), {flag: 'wx'})   // null - represents the replacer function.  2 - represents the spaces to indent.
-} else {
-  config = JSON.parse(fs.readFileSync(configFilePath));
+  fs.writeFileSync(configFilePath, JSON.stringify(deafultConfig, null, 2))   // null - represents the replacer function.  2 - represents the spaces to indent.
 }
+let config = JSON.parse(fs.readFileSync(configFilePath));
+
 
 
 // ***************************************************
@@ -121,6 +120,7 @@ function createMainWindow() {
 
 
     // mainWindow.webContents.openDevTools()
+
 
   }
 

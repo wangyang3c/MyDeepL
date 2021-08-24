@@ -5,16 +5,8 @@
   "main": "./main/main.js",
   "build": {
     "appId": "myDeepL",
-    "mac": {
-      "target": [
-        "dmg",
-        "zip"
-      ]
-    },
     "win": {
       "target": [
-        "nsis",
-        "portable",
         "zip"
       ]
     }
