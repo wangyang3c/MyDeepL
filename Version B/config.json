@@ -1,4 +1,4 @@
 {
-  "autoDeleteNewlines": false,
-  "autoCopy": false
+  "autoDeleteNewlines": true,
+  "autoCopy": true
 }

@@ -24,9 +24,6 @@ if (!fs.existsSync(configFilePath)){
 }
 
 
-
-
-
 // ***************************************************
 // *                app                       
 // *************************************************** 
@@ -40,10 +37,6 @@ app.on('ready', () => {
 
 app.on('before-quit', () => {
   ioHook.stop();
-  fs.writeFile(configFilePath, JSON.stringify(config, null, 2),(err) => {
-    if (err) console.log('Config save failed!');
-    else console.log('The config has been saved!');
-  })
   console.log("Quit")
 });
 
@@ -127,7 +120,7 @@ function createMainWindow() {
     })
 
 
-    mainWindow.webContents.openDevTools()
+    // mainWindow.webContents.openDevTools()
 
   }
 
@@ -146,6 +139,10 @@ function createMainMenu() {
             checked: config.autoDeleteNewlines,
             click(menuItem, browserWindow, event) {
                 config.autoDeleteNewlines = !config.autoDeleteNewlines
+                fs.writeFile(configFilePath, JSON.stringify(config, null, 2),(err) => {
+                  if (err) console.log('Save config failed!');
+                  else console.log('The config has been saved!');
+                })
             }
           }, 
           { 
@@ -154,6 +151,10 @@ function createMainMenu() {
             checked: config.autoCopy,
             click(menuItem, browserWindow, event) {
                 config.autoCopy = !config.autoCopy;
+                fs.writeFile(configFilePath, JSON.stringify(config, null, 2),(err) => {
+                  if (err) console.log('Save config failed!');
+                  else console.log('The config has been saved!');
+                })
             }
           }
         ]
