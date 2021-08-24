@@ -1,13 +1,12 @@
 const {clipboard,ipcRenderer} = require("electron");
 
-var autoDeleteNewlines = true;
-var autoCopy = false;
-var outputObserver = null;
+
+let outputObserver = null;
 
 // 自动模拟在input输入 ， 不然直接改textarea.value可能会不触发翻译
 const inputValue = (dom, st) => {
     dom.value = st;
-    var evt = new InputEvent('input', {
+    let evt = new InputEvent('input', {
         inputType: 'insertText',
         data: st,
         dataTransfer: null,
@@ -17,24 +16,9 @@ const inputValue = (dom, st) => {
 }
 
 ipcRenderer.on('translateClipboard', (event, message)=>{
-    let inputTextArea = document.querySelector('.lmt__source_textarea');
-    inputTextArea.focus();
-    switch(autoDeleteNewlines) {
-        case true: 
-            inputValue(inputTextArea, clipboard.readText().replace(/\s+/g, ' '));
-            break;
-        case false:
-            inputValue(inputTextArea, clipboard.readText());
-            break;
-    }
-});
-
-ipcRenderer.on('setAutoDeleteNewlines', (event, message)=>{
-    autoDeleteNewlines = message;
-})
-
-ipcRenderer.on('setAutoCopy', (event, message)=>{
-    autoCopy = message;
+    // ***************************************************
+    // *                auto copy                    
+    // ***************************************************
     let outputTextArea = document.getElementById('target-dummydiv');
     if(!outputObserver) {
         outputObserver = new MutationObserver((mutationsList, observer) => {
@@ -42,17 +26,32 @@ ipcRenderer.on('setAutoCopy', (event, message)=>{
             clipboard.writeText(outputTextArea.innerHTML);
         });    
     }
-
-    switch(autoCopy) {
+    switch(message.autoCopy) {
         case true: 
             console.log('autoCopy true');
             outputObserver.observe(outputTextArea, {childList: true});
             break;
-
         case false: 
             console.log('autoCopy false');
             outputObserver.disconnect();
             break;
     }
-})
+
+
+    // ***************************************************
+    // *                auto delete newlines                    
+    // ***************************************************
+    let inputTextArea = document.querySelector('.lmt__source_textarea');
+    inputTextArea.focus();
+    switch(message.autoDeleteNewlines) {
+        case true: 
+            console.log('autoDeleteNewlines true');
+            inputValue(inputTextArea, clipboard.readText().replace(/\s+/g, ' '));
+            break;
+        case false:
+            console.log('autoDeleteNewlines false');
+            inputValue(inputTextArea, clipboard.readText());
+            break;
+    }
+});
 

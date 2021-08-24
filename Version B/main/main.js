@@ -2,10 +2,30 @@ const {app, BrowserWindow, Menu, Tray, shell} = require('electron');
 const path = require('path');
 const ioHook = require('iohook');
 const openAboutWindow = require('about-window').default;
+const fs = require('fs');
 
 
-var mainWindow = null;
-var tray = null;
+let mainWindow = null;
+let tray = null;
+
+// ***************************************************
+// *                create or load config                       
+// *************************************************** 
+const configFilePath = path.join(__dirname, '..', 'config.json');
+var config = null;
+if (!fs.existsSync(configFilePath)){
+  config = { 
+    autoDeleteNewlines: true,
+    autoCopy: false,  
+  };
+  fs.writeFileSync(configFilePath, JSON.stringify(config, null, 2), {flag: 'wx'})   // null - represents the replacer function.  2 - represents the spaces to indent.
+} else {
+  config = JSON.parse(fs.readFileSync(configFilePath));
+}
+
+
+
+
 
 // ***************************************************
 // *                app                       
@@ -16,11 +36,15 @@ app.on('ready', () => {
     createMainMenu();
     createTray();
     createDoublePressCtrlCListener();
-
 })
 
 app.on('before-quit', () => {
   ioHook.stop();
+  fs.writeFile(configFilePath, JSON.stringify(config, null, 2),(err) => {
+    if (err) console.log('Config save failed!');
+    else console.log('The config has been saved!');
+  })
+  console.log("Quit")
 });
 
 // Quit when all windows are closed.
@@ -41,7 +65,7 @@ app.on("activate", function() {
     }
   });
 
-  // 最多只能打开一个app实例， 重复打开会显示之前的
+// 最多只能打开一个app实例， 重复打开会显示之前的
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
   app.isQuiting = true;
@@ -103,7 +127,7 @@ function createMainWindow() {
     })
 
 
-    // mainWindow.webContents.openDevTools()
+    mainWindow.webContents.openDevTools()
 
   }
 
@@ -119,17 +143,17 @@ function createMainMenu() {
           { 
             label: "Auto-delete newlines",
             type: "checkbox",
-            checked: true,
+            checked: config.autoDeleteNewlines,
             click(menuItem, browserWindow, event) {
-                mainWindow.webContents.send("setAutoDeleteNewlines", menuItem.checked);
+                config.autoDeleteNewlines = !config.autoDeleteNewlines
             }
           }, 
           { 
             label: "Auto-copy translation",
             type: "checkbox",
-            checked: false,
+            checked: config.autoCopy,
             click(menuItem, browserWindow, event) {
-                mainWindow.webContents.send("setAutoCopy", menuItem.checked);
+                config.autoCopy = !config.autoCopy;
             }
           }
         ]
@@ -192,7 +216,7 @@ function createDoublePressCtrlCListener() {
             PressCtrlC = false;
           },400)
         } else if(event.ctrlKey && event.keycode === 46 && PressCtrlC) {
-          mainWindow.webContents.send('translateClipboard');
+          mainWindow.webContents.send('translateClipboard',config);
           PressCtrlC = false;
           // 这里必须加个延时，不然可能无法正常聚焦窗口
           setTimeout(() => {
