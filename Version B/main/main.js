@@ -40,6 +40,20 @@ app.on("activate", function() {
     }
   });
 
+  // 最多只能打开一个app实例， 重复打开会显示之前的
+const gotTheLock = app.requestSingleInstanceLock()
+if (!gotTheLock) {
+  app.isQuiting = true;
+  app.quit()
+} else {
+  app.on('second-instance', (event, commandLine, workingDirectory) => {
+    // 当运行第二个实例时,将会聚焦到myWindow这个窗口
+    if (mainWindow) {
+      mainWindow.show();
+    }
+  })
+}
+
 // ***************************************************
 // *                mainWindow                       
 // ***************************************************   
