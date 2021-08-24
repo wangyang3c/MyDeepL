@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/wangyang3c/MyDeepL#readme",
   "dependencies": {
+    "about-window": "^1.14.0",
     "iohook": "^0.9.3"
   },
   "devDependencies": {

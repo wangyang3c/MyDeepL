@@ -1,6 +1,7 @@
 const {app, BrowserWindow, Menu, Tray, shell} = require('electron');
 const path = require('path');
 const ioHook = require('iohook');
+const openAboutWindow = require('about-window').default;
 
 
 var mainWindow = null;
@@ -132,7 +133,30 @@ function createMainMenu() {
             }
           }
         ]
-      }
+      },
+      {
+        label: "Help",
+        submenu: [{
+            label: "GitHub",
+            click() {shell.openExternal("https://github.com/wangyang3c/MyDeepL");}
+            },{
+            label: "About",
+            click() {
+              openAboutWindow({
+                icon_path: path.join(__dirname,"..", "icon.ico"),
+                product_name: "MyDeepL",
+                homepage: "https://github.com/wangyang3c/MyDeepL",
+                copyright: "Copyright © 2021 wangyang3c",
+                win_options: {
+                  resizable: false,
+                  parent: mainWindow,
+                  modal: true,
+              },
+                show_close_button: 'Close',
+              })
+            }
+        }]
+    }
     ];
     const menu = Menu.buildFromTemplate(template);
     Menu.setApplicationMenu(menu);
